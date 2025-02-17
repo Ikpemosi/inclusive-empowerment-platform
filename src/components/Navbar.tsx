@@ -14,23 +14,24 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="fixed w-full bg-white/80 backdrop-blur-lg z-50">
+    <nav className="fixed w-full bg-white/80 backdrop-blur-lg z-50 border-b border-gray-100">
       <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center h-16">
-          <a 
-            href="/" 
-            className="flex items-center space-x-2 relative z-50"
-          >
-            <span className="text-2xl font-heading font-bold text-primary">IDEA</span>
+        <div className="flex justify-between items-center h-20">
+          <a href="/" className="flex items-center space-x-3">
+            <img 
+              src="/lovable-uploads/13c4e31b-41b4-4ff8-87b4-155c0f8a2cef.png" 
+              alt="IDEA Logo" 
+              className="h-16 w-auto"
+            />
           </a>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex space-x-8 relative z-50">
+          <div className="hidden md:flex space-x-8">
             {menuItems.map((item) => (
               <a
                 key={item.title}
                 href={item.href}
-                className="text-gray-600 hover:text-primary transition-colors duration-200"
+                className="text-gray-600 hover:text-primary font-medium transition-colors duration-200"
               >
                 {item.title}
               </a>
@@ -39,7 +40,7 @@ const Navbar = () => {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden text-gray-600 relative z-50"
+            className="md:hidden text-gray-600"
             onClick={() => setIsOpen(!isOpen)}
             aria-label="Toggle menu"
           >
@@ -49,7 +50,7 @@ const Navbar = () => {
 
         {/* Mobile Menu */}
         {isOpen && (
-          <div className="md:hidden py-4 animate-fade-in relative z-40 bg-white">
+          <div className="md:hidden py-4 animate-fade-in">
             {menuItems.map((item) => (
               <a
                 key={item.title}
