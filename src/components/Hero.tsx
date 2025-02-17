@@ -1,7 +1,7 @@
 
 const Hero = () => {
   return (
-    <section className="pt-32 pb-16 px-4">
+    <section className="relative pt-32 pb-16 px-4">
       <div className="container mx-auto text-center">
         <span className="inline-block px-4 py-1.5 mb-6 text-sm font-medium bg-primary/10 text-primary rounded-full animate-fade-in">
           Empowering Change Together
@@ -14,16 +14,16 @@ const Hero = () => {
           Advancing social, economic, and political inclusion through strategic advocacy,
           capacity enhancement and community engagement.
         </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-up">
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-up relative z-10">
           <a
             href="#contact"
-            className="px-8 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors duration-200"
+            className="px-8 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors duration-200 w-full sm:w-auto"
           >
             Get Involved
           </a>
           <a
             href="#about"
-            className="px-8 py-3 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+            className="px-8 py-3 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-200 w-full sm:w-auto"
           >
             Learn More
           </a>

@@ -17,11 +17,11 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white">
+    <main className="relative min-h-screen bg-white">
       <Navbar />
       <Hero />
       {/* Additional sections will be added here */}
-    </div>
+    </main>
   );
 };
 
