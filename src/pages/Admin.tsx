@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { auth, storage, db } from "@/lib/firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { collection, addDoc, getDocs } from "firebase/firestore";
 
@@ -75,6 +75,26 @@ const Admin = () => {
       toast({
         title: "Error",
         description: "Invalid credentials",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    setLoading(true);
+    try {
+      await signOut(auth);
+      toast({
+        title: "Success",
+        description: "Logged out successfully",
+      });
+      navigate("/");
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to logout",
         variant: "destructive",
       });
     } finally {
@@ -196,6 +216,13 @@ const Admin = () => {
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-4xl mx-auto">
             <h1 className="text-3xl font-bold mb-8">Admin Dashboard</h1>
+
+      <Button 
+      onClick={handleLogout} 
+      variant="destructive" 
+      disabled={loading}>
+      {loading ? "Logging out..." : "Logout"}
+    </Button>
             
             <Tabs defaultValue="news">
               <TabsList className="mb-8">
