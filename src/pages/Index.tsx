@@ -1,10 +1,10 @@
-
 import { useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Section from "@/components/ui/Section";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import Footer from "@/components/Footer";
 
 const Index = () => {
   const { toast } = useToast();
@@ -165,6 +165,8 @@ const Index = () => {
           ))}
         </div>
       </Section>
+
+      <Footer />
     </main>
   );
 };
