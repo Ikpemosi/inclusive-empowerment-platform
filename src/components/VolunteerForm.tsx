@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { db } from "@/lib/firebase";
-import { collection, addDoc } from "firebase/firestore";
+import { ref, push } from "firebase/database";
 
 const VolunteerForm = () => {
   const [name, setName] = useState("");
@@ -21,7 +21,8 @@ const VolunteerForm = () => {
     setLoading(true);
 
     try {
-      await addDoc(collection(db, "volunteers"), {
+      const volunteersRef = ref(db, 'volunteers');
+      await push(volunteersRef, {
         name,
         email,
         phone,
@@ -41,17 +42,16 @@ const VolunteerForm = () => {
       setPhone("");
       setSkills("");
       setAvailability("");
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to submit application. Please try again.",
+        description: error.message || "Failed to submit application",
         variant: "destructive",
       });
     } finally {
       setLoading(false);
     }
   };
-
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div>
