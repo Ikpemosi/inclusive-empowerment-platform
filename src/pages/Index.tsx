@@ -4,6 +4,9 @@ import Hero from "@/components/Hero";
 import Section from "@/components/ui/Section";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import ContactForm from "@/components/ContactForm";
+import VolunteerForm from "@/components/VolunteerForm";
 import Footer from "@/components/Footer";
 
 const Index = () => {
@@ -163,6 +166,40 @@ const Index = () => {
               </CardContent>
             </Card>
           ))}
+        </div>
+      </Section>
+
+      {/* Contact & Volunteer Section */}
+      <Section id="contact" className="bg-gradient-to-b from-primary/5 to-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-3xl md:text-5xl font-heading font-bold mb-12 text-center text-primary">
+              Get Involved
+            </h2>
+            
+            <Card>
+              <CardContent className="p-6">
+                <Tabs defaultValue="contact" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2 mb-8">
+                    <TabsTrigger value="contact">Contact Us</TabsTrigger>
+                    <TabsTrigger value="volunteer">Volunteer</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="contact">
+                    <div className="space-y-4">
+                      <h3 className="text-2xl font-heading font-semibold mb-4">Send us a Message</h3>
+                      <ContactForm />
+                    </div>
+                  </TabsContent>
+                  <TabsContent value="volunteer">
+                    <div className="space-y-4">
+                      <h3 className="text-2xl font-heading font-semibold mb-4">Volunteer Application</h3>
+                      <VolunteerForm />
+                    </div>
+                  </TabsContent>
+                </Tabs>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </Section>
 
