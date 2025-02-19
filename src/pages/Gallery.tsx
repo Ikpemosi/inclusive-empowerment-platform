@@ -1,20 +1,64 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { useToast } from "@/hooks/use-toast";
+import { db } from "@/lib/firebase";
+import { collection, getDocs } from "firebase/firestore";
+
+interface GalleryImage {
+  id: string;
+  url: string;
+  groupName: string;
+}
+
+interface GalleryGroup {
+  name: string;
+  images: GalleryImage[];
+}
 
 const Gallery = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
+  const [galleryGroups, setGalleryGroups] = useState<GalleryGroup[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
-  const images = [
-    "/lovable-uploads/427e3443-6056-4857-99be-416ad7873886.png",
-    "/lovable-uploads/980ca769-1bf1-4428-9d1d-f7e0ea97af20.png",
-    "/lovable-uploads/16dc969c-fe9f-4857-b477-bd98122cc02e.png",
-    "/lovable-uploads/8f5b5604-c752-4165-bbbb-f35d4eb6ffbe.png",
-    "/lovable-uploads/e9ca4e75-00ff-45ce-93c0-88eb937d727c.png",
-    "/lovable-uploads/a551832d-f79a-4016-9a38-c82d8bc6229d.png"
-  ];
+  useEffect(() => {
+    const fetchGalleryData = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "gallery"));
+        const groups: { [key: string]: GalleryImage[] } = {};
+        
+        querySnapshot.forEach((doc) => {
+          const data = doc.data() as GalleryImage;
+          data.id = doc.id;
+          if (!groups[data.groupName]) {
+            groups[data.groupName] = [];
+          }
+          groups[data.groupName].push(data);
+        });
+
+        const formattedGroups: GalleryGroup[] = Object.entries(groups).map(([name, images]) => ({
+          name,
+          images,
+        }));
+
+        setGalleryGroups(formattedGroups);
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to load gallery images",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchGalleryData();
+  }, [toast]);
 
   return (
     <div className="min-h-screen bg-white">
@@ -35,30 +79,71 @@ const Gallery = () => {
 
         <section className="py-20">
           <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {images.map((image, index) => (
-                <div
-                  key={index}
-                  className="group relative aspect-square overflow-hidden rounded-lg bg-gray-100"
+            {loading ? (
+              <div className="text-center">Loading...</div>
+            ) : selectedGroup ? (
+              <>
+                <button
+                  onClick={() => setSelectedGroup(null)}
+                  className="mb-8 text-primary hover:underline flex items-center gap-2"
                 >
-                  <img
-                    src={image}
-                    alt={`Gallery image ${index + 1}`}
-                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-black/60 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                    <div className="flex h-full items-center justify-center">
-                      <button 
-                        onClick={() => setSelectedImage(image)}
-                        className="rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-900"
+                  ← Back to Groups
+                </button>
+                <h2 className="text-2xl font-bold mb-8">{selectedGroup}</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {galleryGroups
+                    .find((group) => group.name === selectedGroup)
+                    ?.images.map((image, index) => (
+                      <div
+                        key={image.id}
+                        className="group relative aspect-square overflow-hidden rounded-lg bg-gray-100"
                       >
-                        View Image
-                      </button>
+                        <img
+                          src={image.url}
+                          alt={`Gallery image ${index + 1}`}
+                          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                        />
+                        <div className="absolute inset-0 bg-black/60 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                          <div className="flex h-full items-center justify-center">
+                            <button 
+                              onClick={() => setSelectedImage(image.url)}
+                              className="rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-900"
+                            >
+                              View Image
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              </>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {galleryGroups.map((group) => (
+                  <div
+                    key={group.name}
+                    className="group cursor-pointer"
+                    onClick={() => setSelectedGroup(group.name)}
+                  >
+                    <div className="relative aspect-video overflow-hidden rounded-lg bg-gray-100">
+                      {group.images[0] && (
+                        <img
+                          src={group.images[0].url}
+                          alt={group.name}
+                          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                        />
+                      )}
+                      <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                        <div className="text-center">
+                          <h3 className="text-xl font-bold text-white mb-2">{group.name}</h3>
+                          <p className="text-white/80">{group.images.length} images</p>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </section>
       </main>
