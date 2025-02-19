@@ -1,16 +1,19 @@
-import { useEffect } from "react";
+
+import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Section from "@/components/ui/Section";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import ContactForm from "@/components/ContactForm";
 import VolunteerForm from "@/components/VolunteerForm";
 import Footer from "@/components/Footer";
 
 const Index = () => {
   const { toast } = useToast();
+  const [selectedTeamMember, setSelectedTeamMember] = useState<typeof teamMembers[0] | null>(null);
 
   useEffect(() => {
     toast({
@@ -53,21 +56,29 @@ const Index = () => {
       name: "Blessing Anyiwe, HRM, RN, MPH",
       role: "Executive Director",
       image: "/placeholder.svg",
+      bio: "With over 15 years of experience in healthcare and community development, Blessing leads IDEA's mission to create positive change. Her expertise in public health and nursing brings a unique perspective to addressing community needs.",
+      achievements: ["Master's in Public Health", "Registered Nurse", "Healthcare Management Certification"]
     },
     {
       name: "HRM Ayo Isinyemeze",
       role: "Executive Intergovernmental Lead",
       image: "/placeholder.svg",
+      bio: "As our Executive Intergovernmental Lead, HRM Ayo brings extensive experience in government relations and policy advocacy. His work focuses on building strategic partnerships and advancing our policy initiatives.",
+      achievements: ["Government Relations Expert", "Policy Development Specialist", "Community Leadership Award"]
     },
     {
       name: "Ikechukwu Edward, CNA, RN, BSN",
       role: "Director, Fin and Admin",
       image: "/placeholder.svg",
+      bio: "Ikechukwu oversees IDEA's financial operations and administrative functions. His background in nursing and business administration ensures efficient management of our resources.",
+      achievements: ["Bachelor of Science in Nursing", "Certified Nursing Assistant", "Financial Management Certification"]
     },
     {
       name: "Dr. Anita Adeyemi",
       role: "Director, Projects and Programs Development",
       image: "/placeholder.svg",
+      bio: "Dr. Adeyemi leads the development and implementation of IDEA's programs. Her expertise in project management and community development has been instrumental in our success.",
+      achievements: ["Ph.D. in Community Development", "Project Management Professional", "Impact Assessment Specialist"]
     }
   ];
 
@@ -152,7 +163,11 @@ const Index = () => {
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {teamMembers.map((member, index) => (
-            <Card key={index} className="bg-white hover:shadow-xl transition-all duration-300 group">
+            <Card 
+              key={index} 
+              className="bg-white hover:shadow-xl transition-all duration-300 group cursor-pointer"
+              onClick={() => setSelectedTeamMember(member)}
+            >
               <CardContent className="p-6 text-center">
                 <div className="w-32 h-32 mx-auto mb-4 rounded-full overflow-hidden bg-gradient-to-br from-primary/10 to-accent/10">
                   <img
@@ -204,6 +219,30 @@ const Index = () => {
       </Section>
 
       <Footer />
+
+      <Dialog open={!!selectedTeamMember} onOpenChange={() => setSelectedTeamMember(null)}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-heading mb-2">{selectedTeamMember?.name}</DialogTitle>
+            <DialogDescription className="text-primary font-medium">
+              {selectedTeamMember?.role}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-4 space-y-4">
+            <p className="text-gray-700 leading-relaxed">
+              {selectedTeamMember?.bio}
+            </p>
+            <div>
+              <h4 className="font-semibold text-gray-900 mb-2">Key Achievements:</h4>
+              <ul className="list-disc list-inside text-gray-700 space-y-1">
+                {selectedTeamMember?.achievements.map((achievement, index) => (
+                  <li key={index}>{achievement}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </main>
   );
 };
