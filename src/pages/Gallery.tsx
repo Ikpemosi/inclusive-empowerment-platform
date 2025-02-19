@@ -1,8 +1,12 @@
 
+import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 const Gallery = () => {
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
   const images = [
     "/lovable-uploads/427e3443-6056-4857-99be-416ad7873886.png",
     "/lovable-uploads/980ca769-1bf1-4428-9d1d-f7e0ea97af20.png",
@@ -44,7 +48,10 @@ const Gallery = () => {
                   />
                   <div className="absolute inset-0 bg-black/60 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                     <div className="flex h-full items-center justify-center">
-                      <button className="rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-900">
+                      <button 
+                        onClick={() => setSelectedImage(image)}
+                        className="rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-900"
+                      >
                         View Image
                       </button>
                     </div>
@@ -56,6 +63,18 @@ const Gallery = () => {
         </section>
       </main>
       <Footer />
+
+      <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
+        <DialogContent className="max-w-4xl p-0">
+          {selectedImage && (
+            <img
+              src={selectedImage}
+              alt="Full size"
+              className="w-full h-auto"
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
