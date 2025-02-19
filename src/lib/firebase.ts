@@ -5,12 +5,13 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "your-app.firebaseapp.com",
-  projectId: "your-project-id",
-  storageBucket: "your-app.appspot.com",
-  messagingSenderId: "your-messaging-sender-id",
-  appId: "your-app-id"
+  apiKey: "AIzaSyA56evcRviGI6nO87XAKyIDKwus-LiwyX0",
+  authDomain: "idea-ngo-dev.firebaseapp.com",
+  projectId: "idea-ngo-dev",
+  storageBucket: "idea-ngo-dev.firebasestorage.app",
+  messagingSenderId: "564861791185",
+  appId: "1:564861791185:web:4fa7db151689f82f038ef0",
+  measurementId: "G-B9KF60R9VH"
 };
 
 const app = initializeApp(firebaseConfig);
