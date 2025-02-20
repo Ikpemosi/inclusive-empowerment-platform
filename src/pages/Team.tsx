@@ -138,13 +138,13 @@ Passionate about mental health, Anita leads initiatives with the Psychological &
               </p>
               <p className="text-lg text-gray-500 mb-8">
                 If you're committed to making a difference and have skills that align with our goals, we'd love to hear
-                from you. Check out our current openings or reach out to discuss how you can contribute to our cause.
+                from you. Kindly fill our volunteer form and we will reach out to discuss how you can contribute to our cause.
               </p>
               <a
-                href="/careers"
+                href="/#contact"
                 className="inline-block bg-accent text-white px-8 py-3 rounded-lg hover:bg-accent/90 transition-colors duration-300"
               >
-                Explore Opportunities
+                Volunteer form
               </a>
             </motion.div>
           </div>
