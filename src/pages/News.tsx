@@ -96,7 +96,7 @@ const News = () => {
                         />
                       </div>
                       <div className="space-y-4">
-                        <span className="text-sm text-primary font-medium">{item.date}</span>
+                        <span className="text-sm text-primary font-medium">{new Date(item.date).toLocaleDateString()}</span>
                         <h2 className="text-2xl font-heading font-bold text-gray-800">
                           {item.title}
                         </h2>

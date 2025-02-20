@@ -93,7 +93,7 @@ const Gallery = () => {
                   onClick={() => setSelectedGroup(null)}
                   className="mb-8 text-primary hover:underline flex items-center gap-2"
                 >
-                  ← Back to Groups
+                  ← Back to Gallery
                 </button>
                 <h2 className="text-2xl font-bold mb-8">{selectedGroup}</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
