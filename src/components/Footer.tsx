@@ -35,15 +35,15 @@ const Footer = () => {
             <ul className="space-y-2">
               <li className="flex items-center gap-2">
                 <MapPin size={18} />
-                <span>123 Advocacy Street, City</span>
+                <span>Plot 765, Mustapha Akanbi Crescent, Gwarinpa, Abuja</span>
               </li>
               <li className="flex items-center gap-2">
                 <Phone size={18} />
-                <span>+1 234 567 8900</span>
+                <span>+234-803-332-1826</span>
               </li>
               <li className="flex items-center gap-2">
                 <Mail size={18} />
-                <span>info@idea.org</span>
+                <span>ideafoundationngo@gmail.com</span>
               </li>
             </ul>
           </div>
