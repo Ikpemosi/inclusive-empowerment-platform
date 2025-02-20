@@ -71,7 +71,7 @@ Passionate about mental health, Anita leads initiatives with the Psychological &
           <div className="container mx-auto px-4">
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
               {teamMembers.map((member, index) => (
-                <Card key={index} className="group hover:shadow-xl transition-all duration-300">
+                <Card key={index} className="group hover:shadow-xl transition-all duration-300"   onClick={() => setSelectedTeamMember(member)}>
                   <CardContent className="p-6 text-center">
                     <div className="w-32 h-32 mx-auto mb-4 rounded-full overflow-hidden">
                       <img
