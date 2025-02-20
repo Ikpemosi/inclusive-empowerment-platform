@@ -1,11 +1,12 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { Search, X } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { auth, storage, db } from "@/lib/firebase";
@@ -28,11 +29,16 @@ const Admin = () => {
   const [newsImage, setNewsImage] = useState<File | null>(null);
 
   // Gallery form state
-  const [galleryImage, setGalleryImage] = useState<File | null>(null);
+  const [galleryImages, setGalleryImages] = useState<File[]>([]);
+  const [galleryPreviews, setGalleryPreviews] = useState<string[]>([]);
   const [galleryGroup, setGalleryGroup] = useState("");
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   // Volunteers state
   const [volunteers, setVolunteers] = useState<any[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const volunteersPerPage = 5;
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -59,7 +65,6 @@ const Admin = () => {
       
       setVolunteers(volunteerData.reverse());
     } catch (error) {
-      console.log(error);
       toast({
         title: "Error",
         description: "Failed to fetch volunteers",
@@ -149,41 +154,88 @@ const Admin = () => {
     }
   };
 
+  const handleGalleryImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    setGalleryImages(files);
+    
+    // Create preview URLs
+    const previews = files.map(file => URL.createObjectURL(file));
+    setGalleryPreviews(previews);
+  };
+
+  const removeGalleryImage = (index: number) => {
+    setGalleryImages(prev => prev.filter((_, i) => i !== index));
+    setGalleryPreviews(prev => {
+      const newPreviews = prev.filter((_, i) => i !== index);
+      // Clean up old preview URL
+      URL.revokeObjectURL(prev[index]);
+      return newPreviews;
+    });
+  };
+
   const handleGallerySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setUploadProgress(0);
+    
     try {
-      if (!galleryImage) throw new Error("No image selected");
+      if (galleryImages.length === 0) throw new Error("No images selected");
       if (!galleryGroup) throw new Error("Please specify a group name");
 
-      const imageRef = storageRef(storage, `gallery/${galleryImage.name}`);
-      await uploadBytes(imageRef, galleryImage);
-      const imageUrl = await getDownloadURL(imageRef);
+      for (let i = 0; i < galleryImages.length; i++) {
+        const image = galleryImages[i];
+        const imageRef = storageRef(storage, `gallery/${image.name}`);
+        await uploadBytes(imageRef, image);
+        const imageUrl = await getDownloadURL(imageRef);
 
-      const galleryRef = dbRef(db, "gallery");
-      await push(galleryRef, {
-        url: imageUrl,
-        groupName: galleryGroup,
-        uploadedAt: new Date().toISOString(),
-      });
+        const galleryRef = dbRef(db, "gallery");
+        await push(galleryRef, {
+          url: imageUrl,
+          groupName: galleryGroup,
+          uploadedAt: new Date().toISOString(),
+        });
+
+        // Update progress
+        setUploadProgress(((i + 1) / galleryImages.length) * 100);
+      }
 
       toast({
         title: "Success",
-        description: "Gallery image added successfully",
+        description: "Gallery images added successfully",
       });
       
-      setGalleryImage(null);
+      // Clean up
+      setGalleryImages([]);
+      setGalleryPreviews(prev => {
+        prev.forEach(url => URL.revokeObjectURL(url));
+        return [];
+      });
       setGalleryGroup("");
+      setUploadProgress(0);
     } catch (error) {
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to add gallery image",
+        description: error instanceof Error ? error.message : "Failed to add gallery images",
         variant: "destructive",
       });
     } finally {
       setLoading(false);
     }
   };
+
+  // Filter volunteers based on search query
+  const filteredVolunteers = volunteers.filter(volunteer => 
+    volunteer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    volunteer.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    volunteer.skills.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Pagination
+  const totalPages = Math.ceil(filteredVolunteers.length / volunteersPerPage);
+  const paginatedVolunteers = filteredVolunteers.slice(
+    (currentPage - 1) * volunteersPerPage,
+    currentPage * volunteersPerPage
+  );
 
   if (!isAuthenticated) {
     return (
@@ -226,14 +278,11 @@ const Admin = () => {
           <div className="max-w-4xl mx-auto">
             <h1 className="text-3xl font-bold mb-8">Admin Dashboard</h1>
 
-            <Button 
-              onClick={handleLogout} 
-              variant="destructive" 
-              disabled={loading}>
+            <Button onClick={handleLogout} variant="destructive" disabled={loading}>
               {loading ? "Logging out..." : "Logout"}
             </Button>
 
-            <Tabs defaultValue="news">
+            <Tabs defaultValue="news" className="mt-8">
               <TabsList className="mb-8">
                 <TabsTrigger value="news">Add News</TabsTrigger>
                 <TabsTrigger value="gallery">Add Gallery Image</TabsTrigger>
@@ -285,11 +334,38 @@ const Admin = () => {
                       <Input
                         type="file"
                         accept="image/*"
-                        onChange={(e) => setGalleryImage(e.target.files?.[0] || null)}
+                        multiple
+                        onChange={handleGalleryImageSelect}
                         required
                       />
-                      <Button type="submit" disabled={loading}>
-                        {loading ? "Adding..." : "Add Gallery Image"}
+                      
+                      {galleryPreviews.length > 0 && (
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+                          {galleryPreviews.map((preview, index) => (
+                            <div key={index} className="relative group">
+                              <img
+                                src={preview}
+                                alt={`Preview ${index + 1}`}
+                                className="w-full h-40 object-cover rounded-lg"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => removeGalleryImage(index)}
+                                className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                              >
+                                <X className="h-4 w-4" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {uploadProgress > 0 && (
+                        <Progress value={uploadProgress} className="w-full" />
+                      )}
+
+                      <Button type="submit" disabled={loading || galleryImages.length === 0}>
+                        {loading ? "Uploading..." : "Upload Images"}
                       </Button>
                     </form>
                   </CardContent>
@@ -299,8 +375,20 @@ const Admin = () => {
               <TabsContent value="volunteers">
                 <Card>
                   <CardContent className="p-6">
+                    <div className="mb-4">
+                      <div className="relative">
+                        <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                        <Input
+                          placeholder="Search volunteers..."
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          className="pl-10"
+                        />
+                      </div>
+                    </div>
+                    
                     <div className="space-y-6">
-                      {volunteers.map((volunteer) => (
+                      {paginatedVolunteers.map((volunteer) => (
                         <div
                           key={volunteer.id}
                           className="p-4 border rounded-lg space-y-2"
@@ -321,10 +409,32 @@ const Admin = () => {
                           </p>
                         </div>
                       ))}
-                      {volunteers.length === 0 && (
-                        <p className="text-center text-gray-500">No volunteers yet</p>
+                      {filteredVolunteers.length === 0 && (
+                        <p className="text-center text-gray-500">No volunteers found</p>
                       )}
                     </div>
+
+                    {totalPages > 1 && (
+                      <div className="flex justify-center gap-2 mt-6">
+                        <Button
+                          variant="outline"
+                          onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                          disabled={currentPage === 1}
+                        >
+                          Previous
+                        </Button>
+                        <span className="flex items-center px-4">
+                          Page {currentPage} of {totalPages}
+                        </span>
+                        <Button
+                          variant="outline"
+                          onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                          disabled={currentPage === totalPages}
+                        >
+                          Next
+                        </Button>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </TabsContent>
