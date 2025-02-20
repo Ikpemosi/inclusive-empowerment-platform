@@ -53,7 +53,7 @@ const Hero = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.6 }}
-            className="text-4xl md:text-6xl font-heading font-bold mb-6 leading-tight bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent"
+            className="text-4xl md:text-6xl font-heading font-bold mb-6 leading-tight md:leading-snug lg:leading-normal bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent"
           >
             {slides[currentSlide].title}
           </motion.h1>
@@ -65,7 +65,7 @@ const Hero = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto mb-8"
+            className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto mb-8 leading-relaxed"
           >
             {slides[currentSlide].subtitle}
           </motion.p>
