@@ -59,6 +59,7 @@ const Admin = () => {
       
       setVolunteers(volunteerData.reverse());
     } catch (error) {
+      console.log(error);
       toast({
         title: "Error",
         description: "Failed to fetch volunteers",
