@@ -34,7 +34,7 @@ const Hero = () => {
     <section className="relative pt-32 pb-16 px-4 bg-gradient-to-br from-primary/5 via-accent/5 to-secondary/5 overflow-hidden min-h-screen flex items-center">
       <div className="absolute inset-0 w-full h-full">
         <video className="w-full h-full object-cover opacity-10" autoPlay muted loop playsInline>
-          <source src="https://videos.pexels.com/videos/team-of-people-having-a-meeting-5971529" type="video/mp4" />
+          <source src="hero-vid.mp4" type="video/mp4" />
         </video>
       </div>
       <div className="container mx-auto text-center relative z-10">
