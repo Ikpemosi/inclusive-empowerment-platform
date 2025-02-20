@@ -116,7 +116,7 @@ const Index = () => {
     {
       name: "Ikechukwu Edward, CNA, RN, BSN",
       role: "Director, Fin and Admin",
-      image: "/MrIke.jpg",,
+      image: "/MrIke.jpg",
       bio: "Ikechukwu oversees IDEA's financial operations and administrative functions. His background in nursing and business administration ensures efficient management of our resources.",
       achievements: ["Bachelor of Science in Nursing", "Certified Nursing Assistant", "Financial Management Certification"]
     },
