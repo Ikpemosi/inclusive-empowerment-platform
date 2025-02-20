@@ -8,25 +8,25 @@ const Team = () => {
     {
       name: "Blessing Anyiwe, HRM, RN, MPH",
       role: "Executive Director",
-      image: "/placeholder.svg",
+      image: "/MadamBlessing.jpg",
       bio: "Leading our organization with over 15 years of experience in healthcare and advocacy."
     },
     {
       name: "HRM Ayo Isinyemeze",
       role: "Executive Intergovernmental Lead",
-      image: "/placeholder.svg",
+      image: "/HRMAyo.jpg",
       bio: "Specializing in government relations and policy development."
     },
     {
       name: "Ikechukwu Edward, CNA, RN, BSN",
       role: "Director, Fin and Admin",
-      image: "/placeholder.svg",
+      image: "/MrIke.jpg",
       bio: "Managing our financial operations and administrative processes."
     },
     {
       name: "Dr. Anita Adeyemi",
       role: "Director, Projects and Programs Development",
-      image: "/placeholder.svg",
+      image: "/DrAnita.jpg",
       bio: "Overseeing the development and implementation of our key programs."
     }
   ];

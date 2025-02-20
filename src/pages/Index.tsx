@@ -102,28 +102,28 @@ const Index = () => {
     {
       name: "Blessing Anyiwe, HRM, RN, MPH",
       role: "Executive Director",
-      image: "/placeholder.svg",
+      image: "/MadamBlessing.jpg",
       bio: "With over 15 years of experience in healthcare and community development, Blessing leads IDEA's mission to create positive change. Her expertise in public health and nursing brings a unique perspective to addressing community needs.",
       achievements: ["Master's in Public Health", "Registered Nurse", "Healthcare Management Certification"]
     },
     {
       name: "HRM Ayo Isinyemeze",
       role: "Executive Intergovernmental Lead",
-      image: "/placeholder.svg",
+      image: "/HRMAyo.jpg",
       bio: "As our Executive Intergovernmental Lead, HRM Ayo brings extensive experience in government relations and policy advocacy. His work focuses on building strategic partnerships and advancing our policy initiatives.",
       achievements: ["Government Relations Expert", "Policy Development Specialist", "Community Leadership Award"]
     },
     {
       name: "Ikechukwu Edward, CNA, RN, BSN",
       role: "Director, Fin and Admin",
-      image: "/placeholder.svg",
+      image: "/MrIke.jpg",,
       bio: "Ikechukwu oversees IDEA's financial operations and administrative functions. His background in nursing and business administration ensures efficient management of our resources.",
       achievements: ["Bachelor of Science in Nursing", "Certified Nursing Assistant", "Financial Management Certification"]
     },
     {
       name: "Dr. Anita Adeyemi",
       role: "Director, Projects and Programs Development",
-      image: "/placeholder.svg",
+      image: "/DrAnita.jpg",
       bio: "Dr. Adeyemi leads the development and implementation of IDEA's programs. Her expertise in project management and community development has been instrumental in our success.",
       achievements: ["Ph.D. in Community Development", "Project Management Professional", "Impact Assessment Specialist"]
     }
