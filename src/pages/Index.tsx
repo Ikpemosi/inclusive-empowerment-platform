@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { db } from "@/lib/firebase";
 import { ref, get, query, orderByChild, limitToLast } from "firebase/database";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Section from "@/components/ui/Section";
@@ -18,6 +19,7 @@ const Index = () => {
   const { toast } = useToast();
   const [selectedTeamMember, setSelectedTeamMember] = useState<typeof teamMembers[0] | null>(null);
   const [latestImages, setLatestImages] = useState<{ url: string; groupName: string }[]>([]);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   useEffect(() => {
     toast({
@@ -227,7 +229,7 @@ const Index = () => {
                   <CarouselItem key={index} className="basis-1/1 md:basis-1/2 lg:basis-1/3">
                     <div className="p-1">
                       <div className="relative aspect-square overflow-hidden rounded-lg group cursor-pointer"
-                           onClick={() => navigate('/gallery')}>
+                           onClick={() => setSelectedImage(image.url)}>
                         <img
                           src={image.url}
                           alt={image.groupName}
@@ -291,27 +293,15 @@ const Index = () => {
 
       <Footer />
 
-      <Dialog open={!!selectedTeamMember} onOpenChange={() => setSelectedTeamMember(null)}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-heading mb-2">{selectedTeamMember?.name}</DialogTitle>
-            <DialogDescription className="text-primary font-medium">
-              {selectedTeamMember?.role}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="mt-4 space-y-4">
-            <p className="text-gray-700 leading-relaxed">
-              {selectedTeamMember?.bio}
-            </p>
-            <div>
-              <h4 className="font-semibold text-gray-900 mb-2">Key Achievements:</h4>
-              <ul className="list-disc list-inside text-gray-700 space-y-1">
-                {selectedTeamMember?.achievements.map((achievement, index) => (
-                  <li key={index}>{achievement}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
+      <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
+        <DialogContent className="max-w-4xl p-0">
+          {selectedImage && (
+            <img
+              src={selectedImage}
+              alt="Full size gallery"
+              className="w-full h-auto"
+            />
+          )}
         </DialogContent>
       </Dialog>
     </main>
