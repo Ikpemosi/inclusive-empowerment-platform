@@ -10,8 +10,9 @@ import { useToast } from "@/hooks/use-toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import LoginForm from "@/components/admin/LoginForm";
-import NewsForm from "@/components/admin/NewsForm";
-import GalleryUpload from "@/components/admin/GalleryUpload";
+import NewsManager from "@/components/admin/NewsManager";
+import GalleryManager from "@/components/admin/GalleryManager";
+import BlogForm from "@/components/admin/BlogForm";
 import VolunteerList from "@/components/admin/VolunteerList";
 
 const Admin = () => {
@@ -125,17 +126,22 @@ const Admin = () => {
 
             <Tabs defaultValue="news" className="mt-8">
               <TabsList className="mb-8">
-                <TabsTrigger value="news">Add News</TabsTrigger>
-                <TabsTrigger value="gallery">Add Gallery Image</TabsTrigger>
-                <TabsTrigger value="volunteers">View Volunteers</TabsTrigger>
+                <TabsTrigger value="news">News</TabsTrigger>
+                <TabsTrigger value="gallery">Gallery</TabsTrigger>
+                <TabsTrigger value="blog">Blog</TabsTrigger>
+                <TabsTrigger value="volunteers">Volunteers</TabsTrigger>
               </TabsList>
 
               <TabsContent value="news">
-                <NewsForm />
+                <NewsManager />
               </TabsContent>
 
               <TabsContent value="gallery">
-                <GalleryUpload />
+                <GalleryManager />
+              </TabsContent>
+
+              <TabsContent value="blog">
+                <BlogForm />
               </TabsContent>
 
               <TabsContent value="volunteers">
