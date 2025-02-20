@@ -19,6 +19,9 @@ const Admin = () => {
   const [password, setPassword] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isUploadingNews, setIsUploadingNews] = useState(false);
+  const [isUploadingGallery, setIsUploadingGallery] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -95,7 +98,7 @@ const Admin = () => {
   };
 
   const handleLogout = async () => {
-    setLoading(true);
+    setIsLoggingOut(true);
     try {
       await signOut(auth);
       toast({
@@ -110,13 +113,13 @@ const Admin = () => {
         variant: "destructive",
       });
     } finally {
-      setLoading(false);
+      setIsLoggingOut(false);
     }
   };
 
   const handleNewsSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    setIsUploadingNews(true);
     try {
       let imageUrl = "";
       if (newsImage) {
@@ -150,7 +153,7 @@ const Admin = () => {
         variant: "destructive",
       });
     } finally {
-      setLoading(false);
+      setIsUploadingNews(false);
     }
   };
 
@@ -175,7 +178,7 @@ const Admin = () => {
 
   const handleGallerySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    setIsUploadingGallery(true);
     setUploadProgress(0);
     
     try {
@@ -219,7 +222,7 @@ const Admin = () => {
         variant: "destructive",
       });
     } finally {
-      setLoading(false);
+      setIsUploadingGallery(false);
     }
   };
 
@@ -279,7 +282,7 @@ const Admin = () => {
             <h1 className="text-3xl font-bold mb-8">Admin Dashboard</h1>
 
             <Button onClick={handleLogout} variant="destructive" disabled={loading}>
-              {loading ? "Logging out..." : "Logout"}
+              {isLoggingOut ?  "Logging out..." : "Logout"}
             </Button>
 
             <Tabs defaultValue="news" className="mt-8">
@@ -314,7 +317,7 @@ const Admin = () => {
                         onChange={(e) => setNewsImage(e.target.files?.[0] || null)}
                       />
                       <Button type="submit" disabled={loading}>
-                        {loading ? "Adding..." : "Add News Item"}
+                        {isUploadingNews ? "Adding..." : "Add News Item"}
                       </Button>
                     </form>
                   </CardContent>
@@ -365,7 +368,7 @@ const Admin = () => {
                       )}
 
                       <Button type="submit" disabled={loading || galleryImages.length === 0}>
-                        {loading ? "Uploading..." : "Upload Images"}
+                        {isUploadingGallery ? "Uploading..." : "Upload Images"}
                       </Button>
                     </form>
                   </CardContent>
