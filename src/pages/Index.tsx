@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { db } from "@/lib/firebase";
@@ -17,9 +18,9 @@ import Footer from "@/components/Footer";
 const Index = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [selectedTeamMember, setSelectedTeamMember] = useState<typeof teamMembers[0] | null>(null);
   const [latestImages, setLatestImages] = useState<{ url: string; groupName: string }[]>([]);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState("contact");
 
   useEffect(() => {
     toast({
@@ -27,6 +28,20 @@ const Index = () => {
       description: "This website is optimized for accessibility. Press Tab to navigate.",
       duration: 5000,
     });
+
+    // Handle hash-based navigation
+    const handleHashChange = () => {
+      if (window.location.hash === "#volunteer") {
+        setActiveTab("volunteer");
+        document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+      } else if (window.location.hash === "#contact") {
+        setActiveTab("contact");
+        document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+      }
+    };
+
+    handleHashChange(); // Initial check
+    window.addEventListener("hashchange", handleHashChange);
 
     const fetchLatestGalleryImages = async () => {
       try {
@@ -49,6 +64,10 @@ const Index = () => {
     };
 
     fetchLatestGalleryImages();
+
+    return () => {
+      window.removeEventListener("hashchange", handleHashChange);
+    };
   }, [toast]);
 
   const objectives = [
@@ -267,7 +286,7 @@ const Index = () => {
             
             <Card>
               <CardContent className="p-6">
-                <Tabs defaultValue="contact" className="w-full" value={window.location.hash === "#volunteer" ? "volunteer" : "contact"}>
+                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                   <TabsList className="grid w-full grid-cols-2 mb-8">
                     <TabsTrigger value="contact">Contact Us</TabsTrigger>
                     <TabsTrigger value="volunteer">Volunteer</TabsTrigger>

@@ -12,8 +12,16 @@ const Navbar = () => {
     { title: "Team", href: "/team" },
     { title: "News", href: "/news" },
     { title: "Gallery", href: "/gallery" },
-    { title: "Contact", href: "#contact" },
+    { title: "Contact", href: "/#contact" },
   ];
+
+  const handleNavigation = (href: string) => {
+    setIsOpen(false);
+    if (href.startsWith("/#")) {
+      const element = document.getElementById(href.substring(2));
+      element?.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   return (
     <nav className="fixed w-full bg-white/80 backdrop-blur-lg z-50 border-b border-gray-100">
@@ -30,13 +38,19 @@ const Navbar = () => {
           {/* Desktop Menu */}
           <div className="hidden md:flex space-x-8">
             {menuItems.map((item) => (
-              <Link
+              <a
                 key={item.title}
-                to={item.href}
+                href={item.href}
                 className="text-gray-600 hover:text-primary font-medium transition-colors duration-200"
+                onClick={(e) => {
+                  if (item.href.startsWith("/#")) {
+                    e.preventDefault();
+                    handleNavigation(item.href);
+                  }
+                }}
               >
                 {item.title}
-              </Link>
+              </a>
             ))}
           </div>
 
@@ -54,14 +68,19 @@ const Navbar = () => {
         {isOpen && (
           <div className="md:hidden py-4 animate-fade-in">
             {menuItems.map((item) => (
-              <Link
+              <a
                 key={item.title}
-                to={item.href}
+                href={item.href}
                 className="block py-2 text-gray-600 hover:text-primary transition-colors duration-200"
-                onClick={() => setIsOpen(false)}
+                onClick={(e) => {
+                  if (item.href.startsWith("/#")) {
+                    e.preventDefault();
+                    handleNavigation(item.href);
+                  }
+                }}
               >
                 {item.title}
-              </Link>
+              </a>
             ))}
           </div>
         )}
