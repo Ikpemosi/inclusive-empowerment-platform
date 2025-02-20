@@ -74,12 +74,12 @@ const Index = () => {
     {
       title: "Education & Training",
       description: "Provide education and training programs to enhance skills and knowledge",
-      image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80"
+      image: "education-unsplash.jpg"
     },
     {
       title: "Policy Advocacy",
       description: "Advocate for policy reforms and legal protections",
-      image: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&q=80"
+      image: "policy-unsplash.jpg"
     },
     {
       title: "Community Building",
@@ -89,12 +89,12 @@ const Index = () => {
     {
       title: "Awareness",
       description: "Promote awareness and challenge harmful stereotypes and stigma",
-      image: "https://images.unsplash.com/photo-1491438590914-bc09fcaaf77a?auto=format&fit=crop&q=80"
+      image: "awareness-unsplash.jpg"
     },
     {
       title: "Partnerships",
       description: "Foster strategic partnerships with stakeholders",
-      image: "https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&q=80"
+      image: "partnership-unsplash.jpg"
     }
   ];
 
