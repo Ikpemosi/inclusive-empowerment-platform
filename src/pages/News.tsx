@@ -2,17 +2,67 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Card, CardContent } from "@/components/ui/card";
+import { useEffect, useState } from "react";
+import { db } from "@/lib/firebase";
+import { ref, get, query, orderByChild } from "firebase/database";
+import { useToast } from "@/hooks/use-toast";
+
+interface NewsItem {
+  id: string;
+  title: string;
+  date: string;
+  source: string;
+  link: string;
+  image: string;
+}
 
 const News = () => {
-  const newsItems = [
-    {
-      title: "Coalition of NGOs Set to Promote Digital Literacy & Inclusivity for PWDs",
-      date: "2024",
-      source: "News Authority",
-      link: "https://www.newsauthority.com.ng/coalition-of-ngos-set-to-promote-digital-literacy-inclusivity-for-pwds",
-      image: "/lovable-uploads/16dc969c-fe9f-4857-b477-bd98122cc02e.png"
-    }
-  ];
+  const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        const newsRef = ref(db, "news");
+        const snapshot = await get(query(newsRef, orderByChild("date")));
+        const items: NewsItem[] = [];
+        
+        snapshot.forEach((child) => {
+          items.push({
+            id: child.key!,
+            ...child.val()
+          });
+        });
+
+        setNewsItems(items.reverse());
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to load news items",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNews();
+  }, [toast]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white">
+        <Navbar />
+        <main className="pt-20">
+          <div className="container mx-auto px-4 py-8">
+            <p className="text-center">Loading...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -34,8 +84,8 @@ const News = () => {
         <section className="py-20">
           <div className="container mx-auto px-4">
             <div className="grid gap-8">
-              {newsItems.map((item, index) => (
-                <Card key={index} className="overflow-hidden hover:shadow-lg transition-all duration-300">
+              {newsItems.map((item) => (
+                <Card key={item.id} className="overflow-hidden hover:shadow-lg transition-all duration-300">
                   <CardContent className="p-6">
                     <div className="grid md:grid-cols-2 gap-8 items-center">
                       <div className="relative h-[300px] overflow-hidden rounded-lg">
@@ -64,6 +114,9 @@ const News = () => {
                   </CardContent>
                 </Card>
               ))}
+              {newsItems.length === 0 && (
+                <p className="text-center text-gray-500">No news items available</p>
+              )}
             </div>
           </div>
         </section>

@@ -1,5 +1,7 @@
-
 import { useEffect, useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { ref, get, query, orderByChild, limitToLast } from "firebase/database";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Section from "@/components/ui/Section";
@@ -12,8 +14,10 @@ import VolunteerForm from "@/components/VolunteerForm";
 import Footer from "@/components/Footer";
 
 const Index = () => {
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [selectedTeamMember, setSelectedTeamMember] = useState<typeof teamMembers[0] | null>(null);
+  const [latestImages, setLatestImages] = useState<{ url: string; groupName: string }[]>([]);
 
   useEffect(() => {
     toast({
@@ -21,7 +25,29 @@ const Index = () => {
       description: "This website is optimized for accessibility. Press Tab to navigate.",
       duration: 5000,
     });
-  }, []);
+
+    const fetchLatestGalleryImages = async () => {
+      try {
+        const galleryRef = ref(db, "gallery");
+        const snapshot = await get(query(galleryRef, orderByChild("uploadedAt"), limitToLast(5)));
+        const images: { url: string; groupName: string }[] = [];
+        
+        snapshot.forEach((child) => {
+          const data = child.val();
+          images.push({
+            url: data.url,
+            groupName: data.groupName
+          });
+        });
+
+        setLatestImages(images.reverse());
+      } catch (error) {
+        console.error("Failed to load gallery preview:", error);
+      }
+    };
+
+    fetchLatestGalleryImages();
+  }, [toast]);
 
   const objectives = [
     {
@@ -165,8 +191,7 @@ const Index = () => {
           {teamMembers.map((member, index) => (
             <Card 
               key={index} 
-              className="bg-white hover:shadow-xl transition-all duration-300 group cursor-pointer"
-              onClick={() => setSelectedTeamMember(member)}
+              className="bg-white hover:shadow-xl transition-all duration-300 group"
             >
               <CardContent className="p-6 text-center">
                 <div className="w-32 h-32 mx-auto mb-4 rounded-full overflow-hidden bg-gradient-to-br from-primary/10 to-accent/10">
@@ -177,12 +202,63 @@ const Index = () => {
                   />
                 </div>
                 <h3 className="font-heading font-semibold text-lg mb-2 text-gray-800">{member.name}</h3>
-                <p className="text-primary">{member.role}</p>
+                <p className="text-primary mb-4">{member.role}</p>
+                <Link 
+                  to="/team"
+                  className="inline-block px-4 py-2 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors"
+                >
+                  Read More
+                </Link>
               </CardContent>
             </Card>
           ))}
         </div>
       </Section>
+
+      {/* Gallery Preview Section */}
+      {latestImages.length > 0 && (
+        <Section className="bg-gradient-to-b from-white to-primary/5">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-5xl font-heading font-bold mb-6 text-primary">Gallery Preview</h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              Take a glimpse at our recent events and activities
+            </p>
+          </div>
+          <div className="max-w-5xl mx-auto">
+            <Carousel>
+              <CarouselContent>
+                {latestImages.map((image, index) => (
+                  <CarouselItem key={index} className="basis-1/1 md:basis-1/2 lg:basis-1/3">
+                    <div className="p-1">
+                      <div className="relative aspect-square overflow-hidden rounded-lg group cursor-pointer"
+                           onClick={() => navigate('/gallery')}>
+                        <img
+                          src={image.url}
+                          alt={image.groupName}
+                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                        />
+                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <p className="text-white text-sm font-medium">{image.groupName}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious />
+              <CarouselNext />
+            </Carousel>
+            <div className="text-center mt-8">
+              <Link 
+                to="/gallery"
+                className="inline-block px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+              >
+                View Full Gallery
+              </Link>
+            </div>
+          </div>
+        </Section>
+      )}
 
       {/* Contact & Volunteer Section */}
       <Section id="contact" className="bg-gradient-to-b from-primary/5 to-white">
@@ -194,7 +270,7 @@ const Index = () => {
             
             <Card>
               <CardContent className="p-6">
-                <Tabs defaultValue="contact" className="w-full">
+                <Tabs defaultValue="contact" className="w-full" value={window.location.hash === "#volunteer" ? "volunteer" : "contact"}>
                   <TabsList className="grid w-full grid-cols-2 mb-8">
                     <TabsTrigger value="contact">Contact Us</TabsTrigger>
                     <TabsTrigger value="volunteer">Volunteer</TabsTrigger>

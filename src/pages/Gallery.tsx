@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -6,6 +5,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { db } from "@/lib/firebase";
 import { collection, getDocs } from "firebase/firestore";
+import { ref as dbRef, get, query, orderByChild } from "firebase/database";
 
 interface GalleryImage {
   id: string;
@@ -28,21 +28,27 @@ const Gallery = () => {
   useEffect(() => {
     const fetchGalleryData = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, "gallery"));
+        const galleryRef = dbRef(db, "gallery");
+        const snapshot = await get(query(galleryRef, orderByChild("uploadedAt")));
         const groups: { [key: string]: GalleryImage[] } = {};
         
-        querySnapshot.forEach((doc) => {
-          const data = doc.data() as GalleryImage;
-          data.id = doc.id;
+        snapshot.forEach((child) => {
+          const data = child.val();
+          const image: GalleryImage = {
+            id: child.key!,
+            url: data.url,
+            groupName: data.groupName
+          };
+          
           if (!groups[data.groupName]) {
             groups[data.groupName] = [];
           }
-          groups[data.groupName].push(data);
+          groups[data.groupName].push(image);
         });
 
         const formattedGroups: GalleryGroup[] = Object.entries(groups).map(([name, images]) => ({
           name,
-          images,
+          images: images.reverse(),
         }));
 
         setGalleryGroups(formattedGroups);

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
@@ -11,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { auth, storage, db } from "@/lib/firebase";
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { collection, addDoc, getDocs } from "firebase/firestore";
+import { collection, addDoc, getDocs, query, orderByChild } from "firebase/database";
 
 const Admin = () => {
   const [email, setEmail] = useState("");
@@ -46,12 +45,18 @@ const Admin = () => {
 
   const fetchVolunteers = async () => {
     try {
-      const querySnapshot = await getDocs(collection(db, "volunteers"));
-      const volunteerData = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      setVolunteers(volunteerData);
+      const volunteersRef = ref(db, "volunteers");
+      const snapshot = await get(query(volunteersRef, orderByChild("submittedAt")));
+      const volunteerData: any[] = [];
+      
+      snapshot.forEach((child) => {
+        volunteerData.push({
+          id: child.key,
+          ...child.val()
+        });
+      });
+      
+      setVolunteers(volunteerData.reverse());
     } catch (error) {
       toast({
         title: "Error",
@@ -113,7 +118,7 @@ const Admin = () => {
         imageUrl = await getDownloadURL(imageRef);
       }
 
-      await addDoc(collection(db, "news"), {
+      await push(ref(db, "news"), {
         title: newsTitle,
         source: newsSource,
         link: newsLink,
@@ -152,7 +157,7 @@ const Admin = () => {
       await uploadBytes(imageRef, galleryImage);
       const imageUrl = await getDownloadURL(imageRef);
 
-      await addDoc(collection(db, "gallery"), {
+      await push(ref(db, "gallery"), {
         url: imageUrl,
         groupName: galleryGroup,
         uploadedAt: new Date().toISOString(),
@@ -217,13 +222,13 @@ const Admin = () => {
           <div className="max-w-4xl mx-auto">
             <h1 className="text-3xl font-bold mb-8">Admin Dashboard</h1>
 
-      <Button 
-      onClick={handleLogout} 
-      variant="destructive" 
-      disabled={loading}>
-      {loading ? "Logging out..." : "Logout"}
-    </Button>
-            
+            <Button 
+              onClick={handleLogout} 
+              variant="destructive" 
+              disabled={loading}>
+              {loading ? "Logging out..." : "Logout"}
+            </Button>
+
             <Tabs defaultValue="news">
               <TabsList className="mb-8">
                 <TabsTrigger value="news">Add News</TabsTrigger>
