@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { db } from "@/lib/firebase";
 import { ref, get, query, orderByChild, limitToLast } from "firebase/database";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import Navbar from "@/components/Navbar";
@@ -8,7 +9,6 @@ import Section from "@/components/ui/Section";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import ContactForm from "@/components/ContactForm";
 import VolunteerForm from "@/components/VolunteerForm";
 import Footer from "@/components/Footer";
@@ -113,7 +113,6 @@ const Index = () => {
       <Navbar />
       <Hero />
       
-      {/* About Section */}
       <Section id="about" className="bg-gradient-to-b from-white to-primary/5">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl md:text-5xl font-heading font-bold mb-6 text-accent">
@@ -147,7 +146,6 @@ const Index = () => {
         </div>
       </Section>
 
-      {/* What We Do Section */}
       <Section id="what-we-do" className="bg-gradient-to-b from-secondary/5 to-accent/5">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-5xl font-heading font-bold mb-6 text-secondary">What We Do</h2>
@@ -179,7 +177,6 @@ const Index = () => {
         </div>
       </Section>
 
-      {/* Team Section */}
       <Section id="team" className="bg-gradient-to-b from-accent/5 to-white">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-5xl font-heading font-bold mb-6 text-accent">Our Team</h2>
@@ -215,9 +212,8 @@ const Index = () => {
         </div>
       </Section>
 
-      {/* Gallery Preview Section */}
       {latestImages.length > 0 && (
-        <Section className="bg-gradient-to-b from-white to-primary/5">
+        <Section id="gallery-preview" className="bg-gradient-to-b from-white to-primary/5">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-5xl font-heading font-bold mb-6 text-primary">Gallery Preview</h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
@@ -260,7 +256,6 @@ const Index = () => {
         </Section>
       )}
 
-      {/* Contact & Volunteer Section */}
       <Section id="contact" className="bg-gradient-to-b from-primary/5 to-white">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
@@ -9,8 +10,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { auth, storage, db } from "@/lib/firebase";
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { collection, addDoc, getDocs, query, orderByChild } from "firebase/database";
+import { ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
+import { ref as dbRef, push, get, query, orderByChild } from "firebase/database";
 
 const Admin = () => {
   const [email, setEmail] = useState("");
@@ -45,7 +46,7 @@ const Admin = () => {
 
   const fetchVolunteers = async () => {
     try {
-      const volunteersRef = ref(db, "volunteers");
+      const volunteersRef = dbRef(db, "volunteers");
       const snapshot = await get(query(volunteersRef, orderByChild("submittedAt")));
       const volunteerData: any[] = [];
       
@@ -113,12 +114,13 @@ const Admin = () => {
     try {
       let imageUrl = "";
       if (newsImage) {
-        const imageRef = ref(storage, `news/${newsImage.name}`);
+        const imageRef = storageRef(storage, `news/${newsImage.name}`);
         await uploadBytes(imageRef, newsImage);
         imageUrl = await getDownloadURL(imageRef);
       }
 
-      await push(ref(db, "news"), {
+      const newsRef = dbRef(db, "news");
+      await push(newsRef, {
         title: newsTitle,
         source: newsSource,
         link: newsLink,
@@ -153,11 +155,12 @@ const Admin = () => {
       if (!galleryImage) throw new Error("No image selected");
       if (!galleryGroup) throw new Error("Please specify a group name");
 
-      const imageRef = ref(storage, `gallery/${galleryImage.name}`);
+      const imageRef = storageRef(storage, `gallery/${galleryImage.name}`);
       await uploadBytes(imageRef, galleryImage);
       const imageUrl = await getDownloadURL(imageRef);
 
-      await push(ref(db, "gallery"), {
+      const galleryRef = dbRef(db, "gallery");
+      await push(galleryRef, {
         url: imageUrl,
         groupName: galleryGroup,
         uploadedAt: new Date().toISOString(),
