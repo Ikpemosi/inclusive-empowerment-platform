@@ -1,5 +1,5 @@
 
-import { Facebook, Twitter, Instagram, Mail, MapPin, Phone } from "lucide-react";
+import { Instagram, TikTok, Mail, MapPin, Phone } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -53,13 +53,10 @@ const Footer = () => {
             <h3 className="font-heading font-semibold mb-4 text-xl">Follow Us</h3>
             <div className="flex space-x-4">
               <a href="#" className="hover:text-white/80 transition-colors">
-                <Facebook size={24} />
-              </a>
-              <a href="#" className="hover:text-white/80 transition-colors">
-                <Twitter size={24} />
-              </a>
-              <a href="#" className="hover:text-white/80 transition-colors">
                 <Instagram size={24} />
+              </a>
+              <a href="#" className="hover:text-white/80 transition-colors">
+                <TikTok size={24} />
               </a>
             </div>
           </div>
