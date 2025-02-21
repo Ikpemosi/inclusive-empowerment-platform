@@ -12,6 +12,7 @@ import Section from "@/components/ui/Section";
 import { format } from "date-fns";
 import Markdown from "react-markdown";
 import { ArrowLeft } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface BlogPost {
   id: string;
