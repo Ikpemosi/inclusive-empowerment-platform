@@ -13,6 +13,7 @@ import LoginForm from "@/components/admin/LoginForm";
 import NewsManager from "@/components/admin/NewsManager";
 import GalleryManager from "@/components/admin/GalleryManager";
 import BlogForm from "@/components/admin/BlogForm";
+import EventForm from "@/components/admin/EventForm";
 import VolunteerList from "@/components/admin/VolunteerList";
 
 const Admin = () => {
@@ -129,6 +130,7 @@ const Admin = () => {
                 <TabsTrigger value="news">News</TabsTrigger>
                 <TabsTrigger value="gallery">Gallery</TabsTrigger>
                 <TabsTrigger value="blog">Blog</TabsTrigger>
+                <TabsTrigger value="events">Events</TabsTrigger>
                 <TabsTrigger value="volunteers">Volunteers</TabsTrigger>
               </TabsList>
 
@@ -142,6 +144,10 @@ const Admin = () => {
 
               <TabsContent value="blog">
                 <BlogForm />
+              </TabsContent>
+
+              <TabsContent value="events">
+                <EventForm />
               </TabsContent>
 
               <TabsContent value="volunteers">
