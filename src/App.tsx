@@ -11,6 +11,7 @@ import Team from "./pages/Team";
 import News from "./pages/News";
 import Gallery from "./pages/Gallery";
 import Blog from "./pages/Blog";
+import BlogPost from "@/pages/BlogPost";  
 import Events from "./pages/Events";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
