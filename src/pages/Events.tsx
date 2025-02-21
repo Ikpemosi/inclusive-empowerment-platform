@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
 import { db } from "@/lib/firebase";
@@ -20,8 +19,10 @@ interface Event {
   date: string;
   time: string;
   location: string;
-  maxAttendees: number;
+  virtualLink: string | null;
+  maxAttendees: number | null;
   registeredAttendees: number;
+  flyerUrl?: string;
 }
 
 const Events = () => {
@@ -120,15 +121,38 @@ const Events = () => {
                     key={event.id}
                     className="p-4 border rounded-lg hover:border-primary transition-colors"
                   >
+                    {event.flyerUrl && (
+                      <img
+                        src={event.flyerUrl}
+                        alt={`${event.title} flyer`}
+                        className="w-full h-48 object-cover rounded-lg mb-4"
+                      />
+                    )}
                     <h3 className="text-xl font-semibold mb-2">{event.title}</h3>
                     <p className="text-gray-600 mb-2">{event.description}</p>
-                    <p className="text-sm text-gray-500">
-                      Time: {event.time} | Location: {event.location}
-                    </p>
+                    <div className="space-y-2 text-sm text-gray-500">
+                      <p>Time: {event.time}</p>
+                      {event.location && <p>Location: {event.location}</p>}
+                      {event.virtualLink && (
+                        <p>
+                          Virtual Link:{" "}
+                          <a
+                            href={event.virtualLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-primary hover:underline"
+                          >
+                            Join Meeting
+                          </a>
+                        </p>
+                      )}
+                    </div>
                     <div className="mt-4 flex items-center justify-between">
-                      <span className="text-sm text-gray-500">
-                        {event.registeredAttendees}/{event.maxAttendees} registered
-                      </span>
+                      {event.maxAttendees && (
+                        <span className="text-sm text-gray-500">
+                          {event.registeredAttendees}/{event.maxAttendees} registered
+                        </span>
+                      )}
                       <Button
                         onClick={() => {
                           setSelectedEvent(event);

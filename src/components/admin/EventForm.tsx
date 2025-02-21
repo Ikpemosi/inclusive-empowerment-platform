@@ -5,8 +5,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { db } from "@/lib/firebase";
-import { ref, push } from "firebase/database";
+import { storage, db } from "@/lib/firebase";
+import { ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
+import { ref as dbRef, push } from "firebase/database";
 
 const EventForm = () => {
   const [title, setTitle] = useState("");
@@ -14,7 +15,9 @@ const EventForm = () => {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [location, setLocation] = useState("");
+  const [virtualLink, setVirtualLink] = useState("");
   const [maxAttendees, setMaxAttendees] = useState("");
+  const [flyer, setFlyer] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
@@ -23,14 +26,23 @@ const EventForm = () => {
     setLoading(true);
 
     try {
-      const eventsRef = ref(db, "events");
+      let flyerUrl = "";
+      if (flyer) {
+        const flyerRef = storageRef(storage, `events/flyers/${Date.now()}_${flyer.name}`);
+        await uploadBytes(flyerRef, flyer);
+        flyerUrl = await getDownloadURL(flyerRef);
+      }
+
+      const eventsRef = dbRef(db, "events");
       await push(eventsRef, {
         title,
         description,
         date,
         time,
         location,
-        maxAttendees: parseInt(maxAttendees),
+        virtualLink: virtualLink || null,
+        maxAttendees: maxAttendees ? parseInt(maxAttendees) : null,
+        flyerUrl,
         registeredAttendees: 0,
         createdAt: new Date().toISOString(),
       });
@@ -46,7 +58,9 @@ const EventForm = () => {
       setDate("");
       setTime("");
       setLocation("");
+      setVirtualLink("");
       setMaxAttendees("");
+      setFlyer(null);
     } catch (error) {
       toast({
         title: "Error",
@@ -90,19 +104,31 @@ const EventForm = () => {
             />
           </div>
           <Input
-            placeholder="Location"
+            placeholder="Location (optional if virtual)"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
-            required
+          />
+          <Input
+            placeholder="Virtual Meeting Link (Zoom/Google Meet)"
+            value={virtualLink}
+            onChange={(e) => setVirtualLink(e.target.value)}
+            type="url"
           />
           <Input
             type="number"
-            placeholder="Maximum Attendees"
+            placeholder="Maximum Attendees (optional)"
             value={maxAttendees}
             onChange={(e) => setMaxAttendees(e.target.value)}
             min="1"
-            required
           />
+          <div className="space-y-2">
+            <label className="text-sm text-gray-500">Event Flyer (optional)</label>
+            <Input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setFlyer(e.target.files?.[0] || null)}
+            />
+          </div>
           <Button type="submit" disabled={loading}>
             {loading ? "Adding..." : "Add Event"}
           </Button>

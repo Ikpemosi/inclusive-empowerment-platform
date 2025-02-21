@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { db } from "@/lib/firebase";
@@ -21,6 +20,7 @@ const Index = () => {
   const [latestImages, setLatestImages] = useState<{ url: string; groupName: string }[]>([]);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("contact");
+  const [upcomingEvents, setUpcomingEvents] = useState<any[]>([]);
 
   useEffect(() => {
     toast({
@@ -64,6 +64,31 @@ const Index = () => {
     };
 
     fetchLatestGalleryImages();
+
+    const fetchUpcomingEvents = async () => {
+      try {
+        const eventsRef = ref(db, "events");
+        const snapshot = await get(query(eventsRef, orderByChild("date")));
+        const events: any[] = [];
+        const today = new Date().setHours(0, 0, 0, 0);
+        
+        snapshot.forEach((child) => {
+          const event = {
+            id: child.key,
+            ...child.val()
+          };
+          if (new Date(event.date).getTime() >= today) {
+            events.push(event);
+          }
+        });
+        
+        setUpcomingEvents(events.slice(0, 3)); // Get next 3 upcoming events
+      } catch (error) {
+        console.error("Failed to load upcoming events:", error);
+      }
+    };
+
+    fetchUpcomingEvents();
 
     return () => {
       window.removeEventListener("hashchange", handleHashChange);
@@ -273,6 +298,49 @@ const Index = () => {
                 View Full Gallery
               </Link>
             </div>
+          </div>
+        </Section>
+      )}
+
+      {upcomingEvents.length > 0 && (
+        <Section id="upcoming-events" className="bg-gradient-to-b from-white to-primary/5">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-5xl font-heading font-bold mb-6 text-primary">Upcoming Events</h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              Join us at our upcoming events and be part of our community
+            </p>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            {upcomingEvents.map((event) => (
+              <Card key={event.id} className="group hover:shadow-lg transition-all duration-300">
+                <CardContent className="p-6">
+                  {event.flyerUrl && (
+                    <div className="aspect-video mb-4 rounded-lg overflow-hidden">
+                      <img
+                        src={event.flyerUrl}
+                        alt={event.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                  )}
+                  <h3 className="text-xl font-semibold mb-2">{event.title}</h3>
+                  <p className="text-gray-600 mb-4 line-clamp-2">{event.description}</p>
+                  <div className="space-y-1 text-sm text-gray-500 mb-4">
+                    <p>{new Date(event.date).toLocaleDateString()}</p>
+                    <p>{event.time}</p>
+                    {event.location && <p>{event.location}</p>}
+                  </div>
+                  <Link to="/events">
+                    <Button className="w-full">View Details</Button>
+                  </Link>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          <div className="text-center mt-8">
+            <Link to="/events">
+              <Button variant="outline">View All Events</Button>
+            </Link>
           </div>
         </Section>
       )}
