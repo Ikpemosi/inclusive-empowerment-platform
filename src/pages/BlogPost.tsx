@@ -54,7 +54,7 @@ const BlogPost = () => {
     return (
       <div className="min-h-screen bg-white">
         <Navbar />
-        <Section className="pt-20">
+        <Section id="not-found" className="pt-20">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-2xl font-bold mb-4">Blog post not found</h1>
             <Link to="/blog">
@@ -76,7 +76,7 @@ const BlogPost = () => {
 
       <div className="min-h-screen bg-white">
         <Navbar />
-        <Section className="pt-20">
+        <Section id="blog-post" className="pt-20">
           <div className="max-w-4xl mx-auto">
             <Link to="/blog" className="inline-flex items-center text-primary hover:underline mb-8">
               <ArrowLeft className="mr-2 h-4 w-4" />
