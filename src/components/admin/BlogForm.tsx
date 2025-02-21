@@ -6,7 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { storage, db } from "@/lib/firebase";
 import { ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
 import { ref as dbRef, push, update } from "firebase/database";
-
+import { Card, CardContent } from "@/components/ui/card";
 interface BlogPost {
   id: string;
   title: string;
