@@ -105,12 +105,12 @@ const Index = () => {
     {
       title: "Policy Advocacy",
       description: "Advocate for policy reforms and legal protections",
-      image: "policy-unsplash.jpg"
+      image: "policy-idea.jpg"
     },
     {
       title: "Community Building",
       description: "Build capacity and empower marginalized communities",
-      image: "https://images.unsplash.com/photo-1531498860502-7c67cf02f657?auto=format&fit=crop&q=80"
+      image: "foodbank-pexels.jpg"
     },
     {
       title: "Awareness",
