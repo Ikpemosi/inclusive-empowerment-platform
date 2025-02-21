@@ -1,5 +1,22 @@
 
-import { Instagram, TikTok, Mail, MapPin, Phone } from "lucide-react";
+import { Instagram, Mail, MapPin, Phone } from "lucide-react";
+
+const TikTokIcon = ({ size = 24, className = "" }) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    width={size} 
+    height={size} 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round"
+    className={className}
+  >
+    <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+  </svg>
+);
 
 const Footer = () => {
   return (
@@ -56,7 +73,7 @@ const Footer = () => {
                 <Instagram size={24} />
               </a>
               <a href="#" className="hover:text-white/80 transition-colors">
-                <TikTok size={24} />
+                <TikTokIcon size={24} />
               </a>
             </div>
           </div>
