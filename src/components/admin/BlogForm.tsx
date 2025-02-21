@@ -1,20 +1,40 @@
-
-import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { storage, db } from "@/lib/firebase";
 import { ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
-import { ref as dbRef, push } from "firebase/database";
+import { ref as dbRef, push, update } from "firebase/database";
 
-const BlogForm = () => {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [media, setMedia] = useState<File | null>(null);
+interface BlogPost {
+  id: string;
+  title: string;
+  content: string;
+  mediaUrl: string;
+  mediaType: string;
+  createdAt: string;
+}
+
+interface BlogFormProps {
+  post?: BlogPost | null;
+  onSuccess?: () => void;
+}
+
+const BlogForm = ({ post, onSuccess }: BlogFormProps) => {
+  const [title, setTitle] = useState(post?.title || "");
+  const [content, setContent] = useState(post?.content || "");
+  const [media, setMedia] = useState<File | null>(post?.mediaUrl ? null : post?.mediaUrl ? null : null);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (post) {
+      setTitle(post.title);
+      setContent(post.content);
+      setMedia(post.mediaUrl ? null : post.mediaUrl ? null : null);
+    }
+  }, [post]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,14 +47,24 @@ const BlogForm = () => {
         mediaUrl = await getDownloadURL(mediaRef);
       }
 
-      const blogRef = dbRef(db, "blog");
-      await push(blogRef, {
-        title,
-        content,
-        mediaUrl,
-        mediaType: media?.type.startsWith("video/") ? "video" : "image",
-        createdAt: new Date().toISOString(),
-      });
+      if (post) {
+        await update(dbRef(db, `blog/${post.id}`), {
+          title,
+          content,
+          mediaUrl,
+          mediaType: media?.type.startsWith("video/") ? "video" : "image",
+          createdAt: new Date().toISOString(),
+        });
+      } else {
+        const blogRef = dbRef(db, "blog");
+        await push(blogRef, {
+          title,
+          content,
+          mediaUrl,
+          mediaType: media?.type.startsWith("video/") ? "video" : "image",
+          createdAt: new Date().toISOString(),
+        });
+      }
 
       toast({
         title: "Success",
@@ -44,6 +74,9 @@ const BlogForm = () => {
       setTitle("");
       setContent("");
       setMedia(null);
+      if (onSuccess) {
+        onSuccess();
+      }
     } catch (error) {
       toast({
         title: "Error",

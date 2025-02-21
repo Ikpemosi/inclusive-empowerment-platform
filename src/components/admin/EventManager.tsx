@@ -1,8 +1,16 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
 import { db } from "@/lib/firebase";
 import { ref, get, remove, update } from "firebase/database";
@@ -38,6 +46,8 @@ const EventManager = () => {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const eventsPerPage = 5;
+  const [registrantPage, setRegistrantPage] = useState(1);
+  const [registrantSearch, setRegistrantSearch] = useState("");
 
   useEffect(() => {
     fetchEvents();
@@ -117,6 +127,10 @@ const EventManager = () => {
   const paginatedEvents = events.slice(
     (currentPage - 1) * eventsPerPage,
     currentPage * eventsPerPage
+  );
+
+  const filteredRegistrants = registrants.filter((registrant) =>
+    registrant.name.toLowerCase().includes(registrantSearch.toLowerCase())
   );
 
   return (
@@ -204,28 +218,70 @@ const EventManager = () => {
       )}
 
       <Dialog open={showRegistrants} onOpenChange={setShowRegistrants}>
-        <DialogContent className="max-w-3xl">
+        <DialogContent className="max-w-4xl">
           <DialogHeader>
-            <DialogTitle>
+            <DialogTitle className="text-2xl">
               {selectedEvent?.title} - Registrants
             </DialogTitle>
           </DialogHeader>
-          <div className="max-h-[60vh] overflow-y-auto">
-            {registrants.length > 0 ? (
-              <div className="divide-y">
-                {registrants.map((registrant, index) => (
-                  <div key={index} className="py-4">
-                    <h4 className="font-semibold">{registrant.name}</h4>
-                    <p className="text-sm text-gray-600">{registrant.email}</p>
-                    <p className="text-sm text-gray-600">{registrant.phone}</p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      Registered: {new Date(registrant.registeredAt).toLocaleString()}
-                    </p>
-                  </div>
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <p className="text-sm text-gray-500">
+                Total Registrants: {registrants.length}
+                {selectedEvent?.maxAttendees ? ` / ${selectedEvent.maxAttendees}` : ''}
+              </p>
+              <Input
+                placeholder="Search registrants..."
+                className="max-w-xs"
+                onChange={(e) => setRegistrantSearch(e.target.value)}
+              />
+            </div>
+            
+            <div className="rounded-md border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Email</TableHead>
+                    <TableHead>Phone</TableHead>
+                    <TableHead>Registered At</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredRegistrants.map((registrant, index) => (
+                    <TableRow key={index}>
+                      <TableCell className="font-medium">{registrant.name}</TableCell>
+                      <TableCell>{registrant.email}</TableCell>
+                      <TableCell>{registrant.phone}</TableCell>
+                      <TableCell>
+                        {new Date(registrant.registeredAt).toLocaleString()}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {filteredRegistrants.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={4} className="text-center py-4 text-gray-500">
+                        No registrants found
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+
+            {registrants.length > 10 && (
+              <div className="flex justify-center gap-2 mt-4">
+                {[...Array(Math.ceil(filteredRegistrants.length / 10))].map((_, i) => (
+                  <Button
+                    key={i}
+                    variant={registrantPage === i + 1 ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setRegistrantPage(i + 1)}
+                  >
+                    {i + 1}
+                  </Button>
                 ))}
               </div>
-            ) : (
-              <p className="text-center text-gray-500 py-8">No registrants yet</p>
             )}
           </div>
         </DialogContent>
