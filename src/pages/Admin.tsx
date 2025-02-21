@@ -12,10 +12,10 @@ import Footer from "@/components/Footer";
 import LoginForm from "@/components/admin/LoginForm";
 import NewsManager from "@/components/admin/NewsManager";
 import GalleryManager from "@/components/admin/GalleryManager";
-import BlogForm from "@/components/admin/BlogForm";
+import BlogManager from "@/components/admin/BlogManager";
 import EventForm from "@/components/admin/EventForm";
-import VolunteerList from "@/components/admin/VolunteerList";
 import EventManager from "@/components/admin/EventManager";
+import VolunteerList from "@/components/admin/VolunteerList";
 
 const Admin = () => {
   const [email, setEmail] = useState("");
@@ -127,13 +127,15 @@ const Admin = () => {
             </div>
 
             <Tabs defaultValue="news" className="mt-8">
-              <TabsList className="mb-8">
-                <TabsTrigger value="news">News</TabsTrigger>
-                <TabsTrigger value="gallery">Gallery</TabsTrigger>
-                <TabsTrigger value="blog">Blog</TabsTrigger>
-                <TabsTrigger value="events">Events</TabsTrigger>
-                <TabsTrigger value="volunteers">Volunteers</TabsTrigger>
-              </TabsList>
+              <div className="overflow-x-auto">
+                <TabsList className="mb-8 w-full justify-start">
+                  <TabsTrigger value="news" className="flex-shrink-0">News</TabsTrigger>
+                  <TabsTrigger value="gallery" className="flex-shrink-0">Gallery</TabsTrigger>
+                  <TabsTrigger value="blog" className="flex-shrink-0">Blog</TabsTrigger>
+                  <TabsTrigger value="events" className="flex-shrink-0">Events</TabsTrigger>
+                  <TabsTrigger value="volunteers" className="flex-shrink-0">Volunteers</TabsTrigger>
+                </TabsList>
+              </div>
 
               <TabsContent value="news">
                 <NewsManager />
@@ -144,7 +146,7 @@ const Admin = () => {
               </TabsContent>
 
               <TabsContent value="blog">
-                <BlogForm />
+                <BlogManager />
               </TabsContent>
 
               <TabsContent value="events">
