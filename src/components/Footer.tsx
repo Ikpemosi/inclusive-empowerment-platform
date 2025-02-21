@@ -69,10 +69,10 @@ const Footer = () => {
           <div>
             <h3 className="font-heading font-semibold mb-4 text-xl">Follow Us</h3>
             <div className="flex space-x-4">
-              <a href="#" className="hover:text-white/80 transition-colors">
+              <a href=" https://www.instagram.com/ideafoundation_ng?igsh=MW5mN201eTk3aGs5Nw%3D%3D&utm_source=qr" className="hover:text-white/80 transition-colors">
                 <Instagram size={24} />
               </a>
-              <a href="#" className="hover:text-white/80 transition-colors">
+              <a href="https://www.tiktok.com/@ideafdnng?_t=ZM-8u6Htivectz&_r=1" className="hover:text-white/80 transition-colors">
                 <TikTokIcon size={24} />
               </a>
             </div>
