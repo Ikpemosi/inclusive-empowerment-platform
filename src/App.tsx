@@ -10,6 +10,7 @@ import WhatWeDo from "./pages/WhatWeDo";
 import Team from "./pages/Team";
 import News from "./pages/News";
 import Gallery from "./pages/Gallery";
+import Blog from "./pages/Blog";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/team" element={<Team />} />
           <Route path="/news" element={<News />} />
           <Route path="/gallery" element={<Gallery />} />
+          <Route path="/blog" element={<Blog />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
