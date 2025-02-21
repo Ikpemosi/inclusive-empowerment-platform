@@ -104,9 +104,21 @@ const Events = () => {
                   }}
                   modifiersStyles={{
                     hasEvent: { 
+                      backgroundColor: 'rgb(var(--primary) / 0.15)',
                       fontWeight: 'bold',
-                      backgroundColor: 'rgb(var(--primary) / 0.1)',
-                      color: 'rgb(var(--primary))'
+                      color: 'rgb(var(--primary))',
+                      position: 'relative',
+                      '&::after': {
+                        content: '""',
+                        position: 'absolute',
+                        bottom: '0',
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        width: '4px',
+                        height: '4px',
+                        borderRadius: '50%',
+                        backgroundColor: 'rgb(var(--primary))'
+                      }
                     }
                   }}
                 />

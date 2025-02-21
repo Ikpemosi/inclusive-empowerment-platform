@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -7,9 +7,26 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { storage, db } from "@/lib/firebase";
 import { ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
-import { ref as dbRef, push } from "firebase/database";
+import { ref as dbRef, push, update } from "firebase/database";
 
-const EventForm = () => {
+interface Event {
+  id: string;
+  title: string;
+  description: string;
+  date: string;
+  time: string;
+  location: string;
+  virtualLink: string | null;
+  maxAttendees: number | null;
+  flyerUrl?: string;
+}
+
+interface EventFormProps {
+  event?: Event | null;
+  onSuccess?: () => void;
+}
+
+const EventForm = ({ event, onSuccess }: EventFormProps) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [date, setDate] = useState("");
@@ -21,50 +38,70 @@ const EventForm = () => {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
+  useEffect(() => {
+    if (event) {
+      setTitle(event.title);
+      setDescription(event.description);
+      setDate(event.date);
+      setTime(event.time);
+      setLocation(event.location || "");
+      setVirtualLink(event.virtualLink || "");
+      setMaxAttendees(event.maxAttendees?.toString() || "");
+    }
+  }, [event]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      let flyerUrl = "";
+      let flyerUrl = event?.flyerUrl || "";
       if (flyer) {
         const flyerRef = storageRef(storage, `events/flyers/${Date.now()}_${flyer.name}`);
         await uploadBytes(flyerRef, flyer);
         flyerUrl = await getDownloadURL(flyerRef);
       }
 
-      const eventsRef = dbRef(db, "events");
-      await push(eventsRef, {
+      const eventData = {
         title,
         description,
         date,
         time,
-        location,
+        location: location || null,
         virtualLink: virtualLink || null,
         maxAttendees: maxAttendees ? parseInt(maxAttendees) : null,
-        flyerUrl,
-        registeredAttendees: 0,
-        createdAt: new Date().toISOString(),
-      });
+        flyerUrl: flyerUrl || null,
+        ...(event ? {} : { registeredAttendees: 0, createdAt: new Date().toISOString() })
+      };
+
+      if (event) {
+        await update(dbRef(db, `events/${event.id}`), eventData);
+      } else {
+        await push(dbRef(db, "events"), eventData);
+      }
 
       toast({
         title: "Success",
-        description: "Event added successfully",
+        description: `Event ${event ? "updated" : "added"} successfully`,
       });
       
-      // Reset form
-      setTitle("");
-      setDescription("");
-      setDate("");
-      setTime("");
-      setLocation("");
-      setVirtualLink("");
-      setMaxAttendees("");
-      setFlyer(null);
+      onSuccess?.();
+
+      if (!event) {
+        // Only reset form for new events
+        setTitle("");
+        setDescription("");
+        setDate("");
+        setTime("");
+        setLocation("");
+        setVirtualLink("");
+        setMaxAttendees("");
+        setFlyer(null);
+      }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to add event",
+        description: `Failed to ${event ? "update" : "add"} event`,
         variant: "destructive",
       });
     } finally {
@@ -122,7 +159,9 @@ const EventForm = () => {
             min="1"
           />
           <div className="space-y-2">
-            <label className="text-sm text-gray-500">Event Flyer (optional)</label>
+            <label className="text-sm text-gray-500">
+              Event Flyer (optional) {event?.flyerUrl && "- Leave empty to keep current flyer"}
+            </label>
             <Input
               type="file"
               accept="image/*"
@@ -130,7 +169,7 @@ const EventForm = () => {
             />
           </div>
           <Button type="submit" disabled={loading}>
-            {loading ? "Adding..." : "Add Event"}
+            {loading ? `${event ? "Updating" : "Adding"}...` : event ? "Update Event" : "Add Event"}
           </Button>
         </form>
       </CardContent>

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { auth, db } from "@/lib/firebase";
@@ -15,6 +14,7 @@ import GalleryManager from "@/components/admin/GalleryManager";
 import BlogForm from "@/components/admin/BlogForm";
 import EventForm from "@/components/admin/EventForm";
 import VolunteerList from "@/components/admin/VolunteerList";
+import EventManager from "@/components/admin/EventManager";
 
 const Admin = () => {
   const [email, setEmail] = useState("");
@@ -147,7 +147,18 @@ const Admin = () => {
               </TabsContent>
 
               <TabsContent value="events">
-                <EventForm />
+                <div className="space-y-8">
+                  <Card>
+                    <CardContent className="p-6">
+                      <h2 className="text-xl font-semibold mb-4">Add New Event</h2>
+                      <EventForm />
+                    </CardContent>
+                  </Card>
+                  <div>
+                    <h2 className="text-xl font-semibold mb-4">Manage Events</h2>
+                    <EventManager />
+                  </div>
+                </div>
               </TabsContent>
 
               <TabsContent value="volunteers">
