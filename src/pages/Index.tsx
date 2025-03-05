@@ -115,7 +115,7 @@ const Index = () => {
     {
       title: "Awareness",
       description: "Promote awareness and challenge harmful stereotypes and stigma",
-      image: "awareness-unsplash.jpg"
+      image: "awareness-idea.jpg"
     },
     {
       title: "Partnerships",
