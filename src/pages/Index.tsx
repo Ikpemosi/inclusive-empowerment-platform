@@ -268,13 +268,15 @@ const Index = () => {
             </p>
           </div>
           <div className="max-w-5xl mx-auto">
-            <Carousel>
+            <Carousel className="w-full">
               <CarouselContent>
                 {latestImages.map((image, index) => (
                   <CarouselItem key={index} className="basis-1/1 md:basis-1/2 lg:basis-1/3">
-                    <div className="p-1">
-                      <div className="relative aspect-square overflow-hidden rounded-lg group cursor-pointer"
-                           onClick={() => setSelectedImage(image.url)}>
+                    <div className="p-1 h-full">
+                      <div 
+                        className="relative aspect-square overflow-hidden rounded-lg group cursor-pointer h-full"
+                        onClick={() => setSelectedImage(image.url)}
+                      >
                         <img
                           src={image.url}
                           alt={image.groupName}
@@ -288,8 +290,8 @@ const Index = () => {
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious />
-              <CarouselNext />
+              <CarouselPrevious className="hidden sm:flex" />
+              <CarouselNext className="hidden sm:flex" />
             </Carousel>
             <div className="text-center mt-8">
               <Link 
